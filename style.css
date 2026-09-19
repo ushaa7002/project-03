@@ -1,0 +1,400 @@
+/* =========================
+   BASIC RESET
+========================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f7fb;
+    color: #222;
+    line-height: 1.6;
+    transition: 0.3s;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+header {
+    width: 100%;
+    padding: 18px 7%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+}
+
+nav a:hover {
+    color: #4f46e5;
+}
+
+#themeBtn {
+    border: none;
+    background: #eeeeee;
+    padding: 9px 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 17px;
+}
+
+
+/* =========================
+   HERO SECTION
+========================= */
+
+.hero {
+    min-height: 400px;
+    padding: 80px 7%;
+    text-align: center;
+    background: linear-gradient(
+        135deg,
+        #4f46e5,
+        #7c3aed
+    );
+    color: white;
+}
+
+.hero h1 {
+    font-size: 45px;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+
+/* =========================
+   SEARCH BOX
+========================= */
+
+.search-box {
+    max-width: 650px;
+    margin: auto;
+    display: flex;
+    background: white;
+    padding: 7px;
+    border-radius: 40px;
+}
+
+.search-box input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 14px 20px;
+    font-size: 16px;
+    border-radius: 40px;
+}
+
+.search-box button {
+    border: none;
+    background: #111827;
+    color: white;
+    padding: 12px 22px;
+    border-radius: 30px;
+    cursor: pointer;
+}
+
+.search-box button:hover {
+    background: #374151;
+}
+
+
+/* =========================
+   CATEGORIES
+========================= */
+
+.categories {
+    padding: 50px 7%;
+    text-align: center;
+}
+
+.categories h2 {
+    margin-bottom: 25px;
+    font-size: 30px;
+}
+
+.category-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.category-btn {
+    padding: 11px 20px;
+    border: none;
+    border-radius: 25px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.category-btn:hover {
+    background: #4f46e5;
+    color: white;
+    transform: translateY(-2px);
+}
+
+
+/* =========================
+   NEWS SECTION
+========================= */
+
+.news-section {
+    padding: 30px 7% 70px;
+}
+
+.news-section h2 {
+    text-align: center;
+    font-size: 30px;
+    margin-bottom: 30px;
+}
+
+.news-container {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(280px, 1fr)
+    );
+    gap: 25px;
+}
+
+
+/* =========================
+   NEWS CARD
+========================= */
+
+.news-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: 0.3s;
+}
+
+.news-card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.news-image {
+    width: 100%;
+    height: 190px;
+    object-fit: cover;
+}
+
+.news-content {
+    padding: 20px;
+}
+
+.news-content h3 {
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+.news-content p {
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.news-category {
+    display: inline-block;
+    padding: 5px 10px;
+    background: #eeeaff;
+    color: #4f46e5;
+    border-radius: 15px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.read-btn {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 9px 15px;
+    background: #4f46e5;
+    color: white;
+    text-decoration: none;
+    border-radius: 7px;
+}
+
+.read-btn:hover {
+    background: #3730a3;
+}
+
+
+/* =========================
+   INSIGHTS SECTION
+========================= */
+
+.insights-section {
+    padding: 70px 7%;
+    background: #eef2ff;
+}
+
+.insights-section h2 {
+    text-align: center;
+    margin-bottom: 35px;
+    font-size: 30px;
+}
+
+.insights-container {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(200px, 1fr)
+    );
+    gap: 20px;
+}
+
+.insight-card {
+    background: white;
+    padding: 30px;
+    text-align: center;
+    border-radius: 15px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+.insight-card h3 {
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.insight-card p {
+    font-size: 35px;
+    font-weight: bold;
+    color: #4f46e5;
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+footer {
+    padding: 25px;
+    text-align: center;
+    background: #111827;
+    color: white;
+}
+
+
+/* =========================
+   DARK MODE
+========================= */
+
+body.dark-mode {
+    background: #111827;
+    color: white;
+}
+
+body.dark-mode header {
+    background: #1f2937;
+}
+
+body.dark-mode nav a {
+    color: white;
+}
+
+body.dark-mode .categories,
+body.dark-mode .news-section {
+    background: #111827;
+}
+
+body.dark-mode .news-card,
+body.dark-mode .insight-card,
+body.dark-mode .category-btn {
+    background: #1f2937;
+    color: white;
+}
+
+body.dark-mode .news-content p,
+body.dark-mode .insight-card h3 {
+    color: #d1d5db;
+}
+
+body.dark-mode .insights-section {
+    background: #1f2937;
+}
+
+body.dark-mode #themeBtn {
+    background: #374151;
+    color: white;
+}
+
+
+/* =========================
+   MOBILE RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+
+    header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    nav {
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .hero {
+        padding: 60px 5%;
+    }
+
+    .hero h1 {
+        font-size: 32px;
+    }
+
+    .search-box {
+        flex-direction: column;
+        border-radius: 15px;
+        gap: 5px;
+    }
+
+    .search-box button {
+        width: 100%;
+    }
+
+    .news-section,
+    .categories,
+    .insights-section {
+        padding-left: 5%;
+        padding-right: 5%;
+    }
+}
