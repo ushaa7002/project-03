@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Makes the website responsive on mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>News Insights</title>
+
+    <!-- CSS file -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+    <header>
+
+        <div class="logo">
+            📰 News Insights
+        </div>
+
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#latest">Latest News</a>
+            <a href="#insights">Insights</a>
+            <button id="themeBtn">🌙</button>
+        </nav>
+
+    </header>
+
+
+    <!-- ================= HOME SECTION ================= -->
+    <section id="home" class="hero">
+
+        <h1>Stay Updated With The Latest News</h1>
+
+        <p>
+            Read, search and analyze the latest news in one place.
+        </p>
+
+        <!-- Search Box -->
+        <div class="search-box">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search news..."
+            >
+
+            <button id="searchBtn">
+                🔍 Search
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= CATEGORIES ================= -->
+    <section class="categories">
+
+        <h2>News Categories</h2>
+
+        <div class="category-buttons">
+
+            <button class="category-btn" data-category="All">
+                All
+            </button>
+
+            <button class="category-btn" data-category="Technology">
+                💻 Technology
+            </button>
+
+            <button class="category-btn" data-category="Sports">
+                ⚽ Sports
+            </button>
+
+            <button class="category-btn" data-category="Business">
+                💼 Business
+            </button>
+
+            <button class="category-btn" data-category="World">
+                🌎 World
+            </button>
+
+            <button class="category-btn" data-category="Science">
+                🔬 Science
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= LATEST NEWS ================= -->
+    <section id="latest" class="news-section">
+
+        <h2>Latest News</h2>
+
+        <!-- JavaScript will put news cards here -->
+        <div id="newsContainer" class="news-container">
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= INSIGHTS ================= -->
+    <section id="insights" class="insights-section">
+
+        <h2>📊 News Insights</h2>
+
+        <div class="insights-container">
+
+            <!-- Total News -->
+            <div class="insight-card">
+
+                <h3>Total Articles</h3>
+
+                <p id="totalNews">
+                    0
+                </p>
+
+            </div>
+
+
+            <!-- Technology -->
+            <div class="insight-card">
+
+                <h3>Technology</h3>
+
+                <p id="technologyCount">
+                    0
+                </p>
+
+            </div>
+
+
+            <!-- Sports -->
+            <div class="insight-card">
+
+                <h3>Sports</h3>
+
+                <p id="sportsCount">
+                    0
+                </p>
+
+            </div>
+
+
+            <!-- Business -->
+            <div class="insight-card">
+
+                <h3>Business</h3>
+
+                <p id="businessCount">
+                    0
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= FOOTER ================= -->
+    <footer>
+
+        <p>
+            © 2026 News Insights | Created using HTML, CSS & JavaScript
+        </p>
+
+    </footer>
+
+
+    <!-- JavaScript file -->
+    <script src="script.js"></script>
+
+</body>
+
+</html>
