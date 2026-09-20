@@ -1,65 +1,9 @@
 /* =========================
-   NEWS DATA
+   NEWS API
 ========================= */
 
-const newsData = [
-
-    {
-        title: "Artificial Intelligence is Changing Technology",
-        description: "AI is becoming an important part of modern software and technology.",
-        category: "Technology",
-        source: "Tech News",
-        date: "Today",
-        image: "https://images.unsplash.com/photo-1677442136019-21780ecad995"
-    },
-
-    {
-        title: "India Wins an Exciting Cricket Match",
-        description: "India delivered a strong performance in an exciting cricket match.",
-        category: "Sports",
-        source: "Sports News",
-        date: "Today",
-        image: "https://images.unsplash.com/photo-1531415074968-036ba1b575da"
-    },
-
-    {
-        title: "Global Economy Shows New Changes",
-        description: "Markets and businesses are adapting to changes in the global economy.",
-        category: "Business",
-        source: "Business Daily",
-        date: "Yesterday",
-        image: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a"
-    },
-
-    {
-        title: "Scientists Make New Discovery",
-        description: "Researchers have announced an interesting development in science.",
-        category: "Science",
-        source: "Science Daily",
-        date: "Yesterday",
-        image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d"
-    },
-
-    {
-        title: "New Technology Could Change the Future",
-        description: "Researchers are developing new technologies for the future.",
-        category: "Technology",
-        source: "Future Tech",
-        date: "2 days ago",
-        image: "https://images.unsplash.com/photo-1518770660439-4636190af475"
-    },
-
-    {
-        title: "Countries Discuss Global Issues",
-        description: "World leaders are discussing important global developments.",
-        category: "World",
-        source: "World News",
-        date: "2 days ago",
-        image: "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620"
-    }
-
-];
-
+// Put your NewsAPI key here for local testing
+const API_KEY = "4ed2ccf64eca48a1a748186bdea044ce";
 
 /* =========================
    SELECT HTML ELEMENTS
@@ -94,6 +38,13 @@ const categoryButtons =
 
 
 /* =========================
+   STORE CURRENT NEWS
+========================= */
+
+let newsData = [];
+
+
+/* =========================
    DISPLAY NEWS
 ========================= */
 
@@ -101,12 +52,12 @@ function displayNews(news) {
 
     newsContainer.innerHTML = "";
 
-    if (news.length === 0) {
+    if (!news || news.length === 0) {
 
         newsContainer.innerHTML = `
             <div class="no-news">
                 <h3>😔 No News Found</h3>
-                <p>Try another search.</p>
+                <p>Try another topic.</p>
             </div>
         `;
 
@@ -116,45 +67,65 @@ function displayNews(news) {
 
     news.forEach((article, index) => {
 
-        const card = document.createElement("div");
+        const card =
+            document.createElement("div");
 
         card.classList.add("news-card");
+
+
+        const image =
+            article.urlToImage ||
+            "https://images.unsplash.com/photo-1504711434969-e33886168f5c";
+
+
+        const source =
+            article.source?.name ||
+            "Unknown Source";
+
+
+        const date =
+            article.publishedAt
+                ? new Date(article.publishedAt)
+                    .toLocaleString()
+                : "Unknown date";
+
 
         card.innerHTML = `
 
             <img
-                src="${article.image}"
+                src="${image}"
                 class="news-image"
                 alt="News Image"
+                onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c'"
             >
 
             <div class="news-content">
 
                 <span class="news-category">
-                    ${article.category}
+                    News
                 </span>
 
                 <h3>
-                    ${article.title}
+                    ${article.title || "No title available"}
                 </h3>
 
                 <p>
-                    ${article.description}
+                    ${article.description || "No description available."}
                 </p>
 
                 <small>
-                    📰 ${article.source}
-                    | ${article.date}
+                    📰 ${source}
+                    | ${date}
                 </small>
 
-                <br>
+                <br><br>
 
                 <a
-                    href="#"
+                    href="${article.url}"
+                    target="_blank"
                     class="read-btn"
-                    onclick="readNews(${index})"
                 >
-                    Read More
+                    Read Full Article →
                 </a>
 
                 <button
@@ -167,6 +138,7 @@ function displayNews(news) {
             </div>
         `;
 
+
         newsContainer.appendChild(card);
 
     });
@@ -175,41 +147,98 @@ function displayNews(news) {
 
 
 /* =========================
-   SEARCH NEWS
+   SEARCH LIVE NEWS
 ========================= */
 
-function searchNews() {
+async function searchNews() {
 
     const searchText =
-        searchInput.value.toLowerCase().trim();
+        searchInput.value.trim();
 
 
-    const filteredNews =
-        newsData.filter(article =>
+    if (searchText === "") {
 
-            article.title
-                .toLowerCase()
-                .includes(searchText)
+        alert("Please enter a topic to search.");
 
-            ||
-
-            article.description
-                .toLowerCase()
-                .includes(searchText)
-
-            ||
-
-            article.category
-                .toLowerCase()
-                .includes(searchText)
-
-        );
+        return;
+    }
 
 
-    displayNews(filteredNews);
+    newsContainer.innerHTML = `
+        <div class="loading">
+            <h3>🔍 Searching latest news...</h3>
+            <p>Please wait.</p>
+        </div>
+    `;
+
+
+    try {
+
+        const url =
+            `https://newsapi.org/v2/everything?` +
+            `q=${encodeURIComponent(searchText)}` +
+            `&language=en` +
+            `&sortBy=publishedAt` +
+            `&pageSize=20` +
+            `&apiKey=${API_KEY}`;
+
+
+        const response =
+            await fetch(url);
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message || "Unable to fetch news."
+            );
+
+        }
+
+
+        newsData =
+            data.articles || [];
+
+
+        displayNews(newsData);
+
+        updateInsights();
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        newsContainer.innerHTML = `
+            <div class="no-news">
+
+                <h3>⚠️ Something went wrong</h3>
+
+                <p>
+                    ${error.message}
+                </p>
+
+                <p>
+                    Please check your API key
+                    and internet connection.
+                </p>
+
+            </div>
+        `;
+
+    }
 
 }
 
+
+/* =========================
+   SEARCH BUTTON
+========================= */
 
 searchBtn.addEventListener(
     "click",
@@ -217,12 +246,18 @@ searchBtn.addEventListener(
 );
 
 
+/* =========================
+   ENTER KEY SEARCH
+========================= */
+
 searchInput.addEventListener(
     "keyup",
     function(event) {
 
         if (event.key === "Enter") {
+
             searchNews();
+
         }
 
     }
@@ -230,7 +265,7 @@ searchInput.addEventListener(
 
 
 /* =========================
-   CATEGORY FILTER
+   CATEGORY SEARCH
 ========================= */
 
 categoryButtons.forEach(button => {
@@ -245,16 +280,18 @@ categoryButtons.forEach(button => {
 
             if (category === "All") {
 
-                displayNews(newsData);
+                searchInput.value = "latest";
 
-            } else {
+                searchNews();
 
-                const filteredNews =
-                    newsData.filter(article =>
-                        article.category === category
-                    );
+            }
 
-                displayNews(filteredNews);
+            else {
+
+                searchInput.value =
+                    category;
+
+                searchNews();
 
             }
 
@@ -275,21 +312,55 @@ function updateInsights() {
 
 
     const technology =
-        newsData.filter(
-            article => article.category === "Technology"
-        ).length;
+        newsData.filter(article => {
+
+            const text =
+                (
+                    article.title || ""
+                ).toLowerCase();
+
+            return (
+                text.includes("technology") ||
+                text.includes("ai") ||
+                text.includes("artificial intelligence") ||
+                text.includes("software")
+            );
+
+        }).length;
 
 
     const sports =
-        newsData.filter(
-            article => article.category === "Sports"
-        ).length;
+        newsData.filter(article => {
+
+            const text =
+                (
+                    article.title || ""
+                ).toLowerCase();
+
+            return (
+                text.includes("sport") ||
+                text.includes("cricket") ||
+                text.includes("football")
+            );
+
+        }).length;
 
 
     const business =
-        newsData.filter(
-            article => article.category === "Business"
-        ).length;
+        newsData.filter(article => {
+
+            const text =
+                (
+                    article.title || ""
+                ).toLowerCase();
+
+            return (
+                text.includes("business") ||
+                text.includes("market") ||
+                text.includes("economy")
+            );
+
+        }).length;
 
 
     technologyCount.innerText =
@@ -310,13 +381,17 @@ function updateInsights() {
 
 function saveNews(index) {
 
+    const article =
+        newsData[index];
+
+
     const savedNews =
         JSON.parse(
             localStorage.getItem("savedNews")
         ) || [];
 
 
-    savedNews.push(newsData[index]);
+    savedNews.push(article);
 
 
     localStorage.setItem(
@@ -326,27 +401,6 @@ function saveNews(index) {
 
 
     alert("⭐ News saved successfully!");
-
-}
-
-
-/* =========================
-   READ NEWS
-========================= */
-
-function readNews(index) {
-
-    const article =
-        newsData[index];
-
-
-    alert(
-        article.title +
-        "\n\n" +
-        article.description +
-        "\n\nSource: " +
-        article.source
-    );
 
 }
 
@@ -372,7 +426,9 @@ themeBtn.addEventListener(
 
             themeBtn.innerText = "☀️";
 
-        } else {
+        }
+
+        else {
 
             themeBtn.innerText = "🌙";
 
@@ -386,6 +442,11 @@ themeBtn.addEventListener(
    START WEBSITE
 ========================= */
 
-displayNews(newsData);
-
-updateInsights();
+newsContainer.innerHTML = `
+    <div class="no-news">
+        <h3>📰 Search for News</h3>
+        <p>
+            Enter a topic above to see the latest news.
+        </p>
+    </div>
+`;
