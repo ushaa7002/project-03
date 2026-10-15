@@ -1,15 +1,14 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-
-    <!-- Makes the website responsive on mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>News Insights</title>
+    <title>News Insights | Smarter News Analysis</title>
 
-    <!-- CSS file -->
+    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -17,7 +16,6 @@
 
     <!-- ================= HEADER ================= -->
     <header>
-
         <div class="logo">
             📰 News Insights
         </div>
@@ -26,9 +24,10 @@
             <a href="#home">Home</a>
             <a href="#latest">Latest News</a>
             <a href="#insights">Insights</a>
-            <button id="themeBtn">🌙</button>
+            <button type="button" id="themeBtn" aria-label="Toggle dark mode">
+                🌙
+            </button>
         </nav>
-
     </header>
 
 
@@ -41,72 +40,132 @@
             Read, search and analyze the latest news in one place.
         </p>
 
-        <!-- Search Box -->
+        <!-- Main Search -->
         <div class="search-box">
-
             <input
                 type="text"
                 id="searchInput"
                 placeholder="Search news..."
+                aria-label="Search news"
             >
 
-            <button id="searchBtn">
+            <button type="button" id="searchBtn">
                 🔍 Search
             </button>
-
         </div>
 
     </section>
 
 
-    <!-- ================= CATEGORIES ================= -->
-    <section class="categories">
+    <!-- ================= NEWS CATEGORIES ================= -->
+    <section class="categories" id="categories">
 
         <h2>News Categories</h2>
 
         <div class="category-buttons">
 
-            <button class="category-btn" data-category="All">
+            <button type="button" class="category-btn" data-category="All">
                 All
             </button>
 
-            <button class="category-btn" data-category="Technology">
+            <button type="button" class="category-btn" data-category="Technology">
                 💻 Technology
             </button>
 
-            <button class="category-btn" data-category="Sports">
+            <button type="button" class="category-btn" data-category="Sports">
                 ⚽ Sports
             </button>
 
-            <button class="category-btn" data-category="Business">
+            <button type="button" class="category-btn" data-category="Business">
                 💼 Business
             </button>
 
-            <button class="category-btn" data-category="World">
+            <button type="button" class="category-btn" data-category="World">
                 🌎 World
             </button>
 
-            <button class="category-btn" data-category="Science">
+            <button type="button" class="category-btn" data-category="Science">
                 🔬 Science
             </button>
 
-            <button class="category-btn" data-category="Artificial Intelligence">AI</button>
-<button class="category-btn" data-category="Entertainment">Entertainment</button>
-<button class="category-btn" data-category="Health">Health</button>
-<button class="category-btn" data-category="Education">Education</button>
-<button class="category-btn" data-category="Gaming">Gaming</button>
-<button class="category-btn" data-category="Space">Space</button>
-<button class="category-btn" data-category="Environment">Environment</button>
-<button class="category-btn" data-category="Finance">Finance</button>
-<button class="category-btn" data-category="Automobile">Automobile</button>
-<button class="category-btn" data-category="Travel">Travel</button>
-<button class="category-btn" data-category="Politics">Politics</button>
-<button class="category-btn" data-category="Programming">Programming</button>
-<button class="category-btn" data-category="Gadgets">Gadgets</button>
-<button class="category-btn" data-category="Climate Change">Climate</button>
-<button class="category-btn" data-category="Science">Science</button>
+            <button type="button" class="category-btn" data-category="Artificial Intelligence">
+                🤖 AI
+            </button>
+
+            <button type="button" class="category-btn" data-category="Entertainment">
+                🎬 Entertainment
+            </button>
+
+            <button type="button" class="category-btn" data-category="Health">
+                🩺 Health
+            </button>
+
+            <button type="button" class="category-btn" data-category="Education">
+                🎓 Education
+            </button>
+
+            <button type="button" class="category-btn" data-category="Gaming">
+                🎮 Gaming
+            </button>
+
+            <button type="button" class="category-btn" data-category="Space">
+                🚀 Space
+            </button>
+
+            <button type="button" class="category-btn" data-category="Environment">
+                🌿 Environment
+            </button>
+
+            <button type="button" class="category-btn" data-category="Finance">
+                💰 Finance
+            </button>
+
+            <button type="button" class="category-btn" data-category="Automobile">
+                🚗 Automobile
+            </button>
+
+            <button type="button" class="category-btn" data-category="Travel">
+                ✈️ Travel
+            </button>
+
+            <button type="button" class="category-btn" data-category="Politics">
+                🏛️ Politics
+            </button>
+
+            <button type="button" class="category-btn" data-category="Programming">
+                💻 Programming
+            </button>
+
+            <button type="button" class="category-btn" data-category="Gadgets">
+                📱 Gadgets
+            </button>
+
+            <button type="button" class="category-btn" data-category="Climate Change">
+                🌍 Climate
+            </button>
 
         </div>
+
+    </section>
+    
+<!-- News articles -->
+<div class="news-container" id="newsContainer">
+    <!-- News cards are added by JavaScript -->
+</div>
+
+<!-- Pagination -->
+<div class="pagination" id="pagination"></div>
+
+
+
+        <!-- Filter Status -->
+        <p
+            id="newsResultsMessage"
+            class="news-results-message"
+            aria-live="polite"
+        >
+            
+        </p>
 
     </section>
 
@@ -116,86 +175,89 @@
 
         <h2>Latest News</h2>
 
-        <!-- JavaScript will put news cards here -->
+        <!-- IMPORTANT: Keep this ID only once -->
         <div id="newsContainer" class="news-container">
-
+            <!-- JavaScript will insert news cards here -->
         </div>
 
     </section>
 
 
-    <!-- ================= INSIGHTS ================= -->
+    <!-- ================= NEWS INSIGHTS ================= -->
     <section id="insights" class="insights-section">
 
         <h2>📊 News Insights</h2>
 
         <div class="insights-container">
 
-            <!-- Total News -->
+            <!-- Total Articles -->
             <div class="insight-card">
-
                 <h3>Total Articles</h3>
-
-                <p id="totalNews">
-                    0
-                </p>
-
+                <p id="totalNews">0</p>
             </div>
 
-
-            <!-- Technology -->
+            <!-- Technology Articles -->
             <div class="insight-card">
-
                 <h3>Technology</h3>
-
-                <p id="technologyCount">
-                    0
-                </p>
-
+                <p id="technologyCount">0</p>
             </div>
 
-
-            <!-- Sports -->
+            <!-- Sports Articles -->
             <div class="insight-card">
-
                 <h3>Sports</h3>
-
-                <p id="sportsCount">
-                    0
-                </p>
-
+                <p id="sportsCount">0</p>
             </div>
 
-
-            <!-- Business -->
+            <!-- Business Articles -->
             <div class="insight-card">
-
                 <h3>Business</h3>
-
-                <p id="businessCount">
-                    0
-                </p>
-
+                <p id="businessCount">0</p>
             </div>
 
         </div>
 
     </section>
+    
+<!-- NEWS ANALYTICS DASHBOARD -->
+<section id="analytics" class="analytics-section">
+    <div class="analytics-header">
+        <span class="analytics-label">DATA & INSIGHTS</span>
+        <h2>News Analytics Dashboard</h2>
+        <p>Explore news categories, coverage trends, and popular topics.</p>
+    </div>
+
+    <div class="analytics-grid">
+        <div class="analytics-card">
+            <h3>News by Category</h3>
+            <canvas id="categoryChart"></canvas>
+        </div>
+
+        <div class="analytics-card">
+            <h3>News Coverage Over Time</h3>
+            <canvas id="coverageChart"></canvas>
+        </div>
+
+        <div class="analytics-card analytics-card-wide">
+            <h3>Most Covered Topics</h3>
+            <canvas id="topicsChart"></canvas>
+        </div>
+    </div>
+</section>
+
 
 
     <!-- ================= FOOTER ================= -->
     <footer>
-
         <p>
-            © 2026 News Insights | Created using HTML, CSS & JavaScript
+            © 2026 News Insights | Created using HTML, CSS &amp; JavaScript
         </p>
-
     </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="script.js"></script>
 
-    <!-- JavaScript file -->
-    <script src="script.js"></script>
 
 </body>
 
 </html>
+```

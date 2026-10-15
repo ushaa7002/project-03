@@ -42,6 +42,30 @@ const categoryButtons =
 ========================= */
 
 let newsData = [];
+// Advanced filters
+let displayedNews = [];
+let currentNewsMode = "all";
+
+const advancedSearchInput =
+    document.getElementById("newsSearchInput");
+
+const advancedSearchBtn =
+    document.getElementById("newsSearchBtn");
+
+const advancedCategory =
+    document.getElementById("newsCategoryFilter");
+
+const advancedDate =
+    document.getElementById("newsDateFilter");
+
+const advancedSource =
+    document.getElementById("newsSourceFilter");
+
+const resetFiltersBtn =
+    document.getElementById("resetNewsFilters");
+
+const resultsMessage =
+    document.getElementById("newsResultsMessage");
 
 
 /* =========================
@@ -50,6 +74,7 @@ let newsData = [];
 
 function displayNews(news) {
 
+    displayedNews = news || [];
     newsContainer.innerHTML = "";
 
     if (!news || news.length === 0) {
@@ -144,6 +169,169 @@ function displayNews(news) {
     });
 
 }
+/* =========================
+   ADVANCED NEWS FILTERS
+========================= */
+
+function getArticleSource(article) {
+    return article.source?.name || "Unknown Source";
+}
+
+function getArticleDate(article) {
+    if (!article.publishedAt) return "";
+
+    const date = new Date(article.publishedAt);
+
+    if (Number.isNaN(date.getTime())) return "";
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
+
+function applyNewsFilters() {
+    const keyword =
+        advancedSearchInput?.value.trim().toLowerCase() || "";
+
+    const category =
+        advancedCategory?.value.toLowerCase() || "all";
+
+    const date =
+        advancedDate?.value || "";
+
+    const source =
+        advancedSource?.value || "all";
+
+    let filteredNews = newsData.filter(article => {
+        const title = (article.title || "").toLowerCase();
+        const description =
+            (article.description || "").toLowerCase();
+
+        const text = `${title} ${description}`;
+        const articleSource = getArticleSource(article);
+
+        const matchesKeyword =
+            !keyword || text.includes(keyword);
+
+        // NewsAPI articles do not always contain a category field.
+        // Therefore, this filter checks article text.
+        const categoryKeywords = {
+            technology: ["technology", "tech", "software", "artificial intelligence", "ai", "gadgets"],
+            business: ["business", "market", "economy", "finance", "company"],
+            education: ["education", "school", "university", "student", "college"],
+            sports: ["sport", "cricket", "football", "tennis", "match"],
+            health: ["health", "medical", "hospital", "disease"],
+            science: ["science", "research", "scientist", "discovery"],
+            entertainment: ["entertainment", "movie", "film", "actor", "music"],
+            politics: ["politics", "government", "election", "minister"],
+            world: ["world", "international", "global"]
+        };
+
+        const terms = categoryKeywords[category];
+
+        const matchesCategory =
+            category === "all" ||
+            (terms && terms.some(term => text.includes(term)));
+
+        const matchesDate =
+            !date || getArticleDate(article) === date;
+
+        const matchesSource =
+            source === "all" || articleSource === source;
+
+        return matchesKeyword &&
+            matchesCategory &&
+            matchesDate &&
+            matchesSource;
+    });
+
+    if (currentNewsMode === "latest") {
+        filteredNews.sort((a, b) =>
+            new Date(b.publishedAt || 0) -
+            new Date(a.publishedAt || 0)
+        );
+    }
+
+    if (currentNewsMode === "trending") {
+        // NewsAPI's basic response does not provide a reliable
+        // trending score, so use latest news as a fallback.
+        filteredNews.sort((a, b) =>
+            new Date(b.publishedAt || 0) -
+            new Date(a.publishedAt || 0)
+        );
+    }
+
+    displayNews(filteredNews);
+
+    if (resultsMessage) {
+        resultsMessage.textContent =
+            `${filteredNews.length} news article(s) found.`;
+    }
+}
+
+function populateNewsSources() {
+    if (!advancedSource) return;
+
+    const sources = [
+        ...new Set(newsData.map(getArticleSource))
+    ].sort();
+
+    advancedSource.replaceChildren(
+        new Option("All Sources", "all")
+    );
+
+    sources.forEach(source => {
+        advancedSource.add(new Option(source, source));
+    });
+}
+
+// Advanced search uses your existing NewsAPI search function.
+advancedSearchBtn?.addEventListener("click", () => {
+    searchInput.value = advancedSearchInput.value.trim();
+    searchNews();
+});
+
+advancedSearchInput?.addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+        searchInput.value = advancedSearchInput.value.trim();
+        searchNews();
+    }
+});
+
+advancedCategory?.addEventListener("change", applyNewsFilters);
+advancedDate?.addEventListener("change", applyNewsFilters);
+advancedSource?.addEventListener("change", applyNewsFilters);
+
+// Latest / Trending tabs
+document.querySelectorAll(".news-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+        currentNewsMode = tab.dataset.mode;
+
+        document.querySelectorAll(".news-tab").forEach(button => {
+            button.classList.toggle("active", button === tab);
+        });
+
+        applyNewsFilters();
+    });
+});
+
+// Reset advanced filters
+resetFiltersBtn?.addEventListener("click", () => {
+    if (advancedSearchInput) advancedSearchInput.value = "";
+    if (advancedCategory) advancedCategory.value = "all";
+    if (advancedDate) advancedDate.value = "";
+    if (advancedSource) advancedSource.value = "all";
+
+    currentNewsMode = "all";
+
+    document.querySelectorAll(".news-tab").forEach(tab => {
+        tab.classList.toggle("active", tab.dataset.mode === "all");
+    });
+
+    applyNewsFilters();
+});
 
 
 /* =========================
@@ -200,13 +388,13 @@ async function searchNews() {
         }
 
 
-        newsData =
-            data.articles || [];
+       newsData = data.articles || [];
 
+populateNewsSources();
+applyNewsFilters();
 
-        displayNews(newsData);
-
-        updateInsights();
+updateInsights();
+updateAnalytics(newsData);
 
 
     } catch (error) {
@@ -381,8 +569,7 @@ function updateInsights() {
 
 function saveNews(index) {
 
-    const article =
-        newsData[index];
+    const article = displayedNews[index];
 
 
     const savedNews =
@@ -450,3 +637,195 @@ newsContainer.innerHTML = `
         </p>
     </div>
 `;
+
+
+/* =========================
+   NEWS ANALYTICS DASHBOARD
+========================= */
+
+let categoryChartInstance = null;
+let coverageChartInstance = null;
+let topicsChartInstance = null;
+
+function updateAnalytics(articles) {
+    if (typeof Chart === "undefined") {
+        console.error("Chart.js did not load.");
+        return;
+    }
+
+    if (!Array.isArray(articles)) {
+        console.error("Analytics needs an array of articles.");
+        return;
+    }
+
+    // 1. NEWS BY CATEGORY
+    // Articles need a category property for accurate category counts.
+    const categoryCounts = {};
+
+    articles.forEach(article => {
+        const category = article.category || article._category || "Uncategorized";
+
+        categoryCounts[category] =
+            (categoryCounts[category] || 0) + 1;
+    });
+
+    if (categoryChartInstance) {
+        categoryChartInstance.destroy();
+    }
+
+    categoryChartInstance = new Chart(
+        document.getElementById("categoryChart"),
+        {
+            type: "doughnut",
+            data: {
+                labels: Object.keys(categoryCounts),
+                datasets: [{
+                    label: "Number of Articles",
+                    data: Object.values(categoryCounts),
+                    backgroundColor: [
+                        "#2563eb",
+                        "#06b6d4",
+                        "#8b5cf6",
+                        "#f59e0b",
+                        "#10b981",
+                        "#ef4444",
+                        "#ec4899",
+                        "#64748b"
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: "bottom"
+                    }
+                }
+            }
+        }
+    );
+
+    // 2. NEWS COVERAGE OVER TIME
+    const dateCounts = {};
+
+    articles.forEach(article => {
+        if (!article.publishedAt) return;
+
+        const date = new Date(article.publishedAt);
+
+        if (Number.isNaN(date.getTime())) return;
+
+        const dateLabel = date.toISOString().slice(0, 10);
+
+        dateCounts[dateLabel] = (dateCounts[dateLabel] || 0) + 1;
+    });
+
+    // Display the latest seven dates present in the articles.
+    const sortedDates = Object.keys(dateCounts).sort();
+    const recentDates = sortedDates.slice(-7);
+
+    if (coverageChartInstance) {
+        coverageChartInstance.destroy();
+    }
+
+    coverageChartInstance = new Chart(
+        document.getElementById("coverageChart"),
+        {
+            type: "line",
+            data: {
+                labels: recentDates,
+                datasets: [{
+                    label: "Articles Published",
+                    data: recentDates.map(date => dateCounts[date]),
+                    borderColor: "#2563eb",
+                    backgroundColor: "rgba(37, 99, 235, 0.15)",
+                    fill: true,
+                    tension: 0.35
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        }
+    );
+
+    // 3. MOST COVERED TOPICS
+    const stopWords = new Set([
+        "the", "and", "for", "with", "that", "this",
+        "from", "are", "was", "were", "has", "have",
+        "had", "will", "into", "about", "after", "before",
+        "over", "under", "their", "they", "them", "its",
+        "his", "her", "you", "your", "our", "who", "what",
+        "when", "where", "why", "how", "not", "but",
+        "all", "more", "than", "also", "says", "said",
+        "new", "latest", "news"
+    ]);
+
+    const topicCounts = {};
+
+    articles.forEach(article => {
+        const text = `${article.title || ""} ${article.description || ""}`;
+
+        const words = text.toLowerCase().match(/[a-z]{4,}/g) || [];
+
+        // Count each word only once per article.
+        const uniqueWords = new Set(words);
+
+        uniqueWords.forEach(word => {
+            if (stopWords.has(word)) return;
+
+            topicCounts[word] = (topicCounts[word] || 0) + 1;
+        });
+    });
+
+    const topTopics = Object.entries(topicCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+
+    if (topicsChartInstance) {
+        topicsChartInstance.destroy();
+    }
+
+    topicsChartInstance = new Chart(
+        document.getElementById("topicsChart"),
+        {
+            type: "bar",
+            data: {
+                labels: topTopics.map(item => item[0]),
+                datasets: [{
+                    label: "Articles Mentioning Topic",
+                    data: topTopics.map(item => item[1]),
+                    backgroundColor: "#8b5cf6",
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                indexAxis: "y",
+                responsive: true,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        }
+    );
+}
